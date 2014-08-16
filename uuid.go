@@ -1,4 +1,47 @@
-// Package uuid implements a fast UUID representation and integrates with JSON and SQL drivers
+/*
+Package uuid implements a fast representation of UUIDs (Universally Unique Identifiers) and integrates with JSON and SQL drivers.
+
+This package supports reading of multiple formats of UUIDs, including but not limited to:
+
+	a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+	A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11
+	{a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11}
+	a0eebc999c0b4ef8bb6d6bb9bd380a11
+	a0ee-bc99-9c0b-4ef8-bb6d-6bb9-bd38-0a11
+	{a0eebc99-9c0b4ef8-bb6d6bb9-bd380a11}
+
+The parsing-speed of UUIDs in this package is achieved in several ways:
+
+A lookup table converts hexadecimal digits to bytes.
+
+Scanning and parsing is done in place without allocating anything.
+
+Resulting bytes are written to the UUID as it is parsed. On parse errors
+this will leave the UUID only partially populated with data from the
+input string, leaving the rest of the UUID unmodified.
+
+This package just ignores non-hexadecimal digits when scanning. This can cause
+some odd representations of hexadecimal data to be parsed as valid UUIDs, and
+longer strings like these will parse successfully:
+
+	a0eebc99,9c0b,4ef8,bb6d,6bb9bd380a11
+	a0eebc99This9cIs0b4eOKf8bb6d6bb9bdLOL380a11
+	a0-ee-bc-99-9c-0b-4e-f8-bb-6d-6b-b9-bd-38-0a-11
+
+However, the hexadecimal digits MUST come in pairs, and the total number of bytes
+represented by them MUST equal 16, or it will generate a parse error.
+For example, UUIDs like these will not parse:
+
+	a0eebc999-c0b-4ef8-bb6d-6bb9bd380a11
+	a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a
+	a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a111
+	a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a1111
+
+All string-creating functions will generate UUIDs in the canonical format of:
+
+	a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+
+*/
 package uuid
 
 import (
