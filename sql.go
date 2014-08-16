@@ -19,10 +19,7 @@ func (e *ErrInvalidType) Error() string {
 // If scanning fails the state of the UUID is undetermined.
 func (u *UUID) Scan(val interface{}) error {
 	if s, ok := val.(string); ok {
-		err := u.SetString(s)
-		if err != nil {
-			return err
-		}
+		return u.SetString(s)
 	}
 
 	return &ErrInvalidType{reflect.TypeOf(val)}
