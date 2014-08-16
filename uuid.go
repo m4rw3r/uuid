@@ -6,37 +6,49 @@ import (
 	"fmt"
 )
 
-// UUID represents a Universally-Unique-Identifier
+// UUID represents a Universally-Unique-Identifier.
 type UUID [16]byte
 
+// zero is the zero-UUID, every single byte set to 0.
 var zero = [16]byte{}
 
-type scanError struct {
-	scanned int
-	bytes   int
-	length  int
+// ScanError contains the scanner-state for when the error occurred.
+type ScanError struct {
+	// Scanned is the number of bytes of the source string which has been considered.
+	Scanned int
+	// Written is the number of decoded hexadecimal bytes which has
+	// been written to the UUID instance.
+	Written int
+	// Length is the length of the source string.
+	Length  int
 }
 
-type ErrTooShort scanError
+// ErrTooShort occurs when the supplied string does not contain enough
+// hexadecimal characters to represent a UUID.
+type ErrTooShort ScanError
 
 func (e *ErrTooShort) Error() string {
-	return fmt.Sprintf("invalid UUID: too few bytes (scanned: %d, length: %d, bytes: %d)", e.scanned, e.length, e.bytes)
+	return fmt.Sprintf("invalid UUID: too few bytes (scanned characters: %d, written bytes: %d, string length: %d)", e.Scanned, e.Written, e.Length)
 }
 
-type ErrTooLong scanError
+// ErrTooLong occurs when the supplied string contains more than the
+// required number of hexadecimal characters to represent a UUID.
+type ErrTooLong ScanError
 
 func (e *ErrTooLong) Error() string {
-	return fmt.Sprintf("invalid UUID: too many bytes (scanned: %d, length: %d, bytes: %d)", e.scanned, e.length, e.bytes)
+	return fmt.Sprintf("invalid UUID: too many bytes (scanned characters: %d, written bytes: %d, string length: %d)", e.Scanned, e.Written, e.Length)
 }
 
-type ErrUneven scanError
+// ErrUneven occurs when a hexadecimal digit is not part of a pair, making it
+// impossible to decode it to a byte.
+type ErrUneven ScanError
 
 func (e *ErrUneven) Error() string {
-	return fmt.Sprintf("invalid UUID: uneven hexadecimal bytes (scanned: %d, length: %d, bytes: %d)", e.scanned, e.length, e.bytes)
+	return fmt.Sprintf("invalid UUID: uneven hexadecimal bytes (scanned characters: %d, written bytes: %d, string length: %d)", e.Scanned, e.Written, e.Length)
 }
 
 // hexchar2byte contains the integer byte-value represented by a hexadecimal character,
-// 255 if it is an invalid character
+// 255 if it is an invalid character.
 var hexchar2byte = []byte{
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -56,16 +68,7 @@ var hexchar2byte = []byte{
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 }
 
-// hex2byte reads the first two bytes of the input string and returns the byte matched
-// by their hexadecimal value
-func hex2byte(x string) (byte, bool) {
-	a := hexchar2byte[x[0]]
-	b := hexchar2byte[x[1]]
-
-	return (a << 4) | b, a != 255 && b != 255
-}
-
-// V4 creates a new random UUID with data from crypto/rand.Read
+// V4 creates a new random UUID with data from crypto/rand.Read().
 func V4() (UUID, error) {
 	u := UUID{}
 
@@ -80,7 +83,7 @@ func V4() (UUID, error) {
 	return u, nil
 }
 
-// FromString reads a UUID into a new UUID instance
+// FromString reads a UUID into a new UUID instance.
 func FromString(str string) (UUID, error) {
 	u := UUID{}
 
@@ -136,12 +139,14 @@ func (u *UUID) SetString(str string) error {
 	return nil
 }
 
-// IsZero returns true if the UUID is zero
+// IsZero returns true if the UUID is zero.
 func (u UUID) IsZero() bool {
 	return u == zero
 }
 
-// String returns the string representation of the UUID
+// String returns the string representation of the UUID.
+// This method returns the canonical representation of
+// ``xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx``.
 func (u UUID) String() string {
 	return fmt.Sprintf("%8.x-%4.x-%4.x-%4.x-%12.x", u[0:4], u[4:6], u[6:8], u[8:10], u[10:16])
 }

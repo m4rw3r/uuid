@@ -6,6 +6,7 @@ import (
 	"reflect"
 )
 
+// ErrInvalidType occurs when *UUID.Scan() does not receive a string.
 type ErrInvalidType struct {
 	Type reflect.Type
 }
