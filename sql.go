@@ -15,7 +15,7 @@ func (e *ErrInvalidType) Error() string {
 	return fmt.Sprintf("uuid Scan(): invalid type '%s', expected string.", e.Type.String())
 }
 
-// Scan scans a uuid from the given interface instance and stores it.
+// Scan scans a uuid from the given interface instance.
 // If scanning fails the state of the UUID is undetermined.
 func (u *UUID) Scan(val interface{}) error {
 	if s, ok := val.(string); ok {
@@ -38,7 +38,7 @@ type NullUUID struct {
 	UUID  UUID
 }
 
-// Scan scans a uuid or null from the given instance and stores i.
+// Scan scans a uuid or null from the given value.
 // If the supplied value is nil, Valid will be set to false and the
 // UUID will be zeroed.
 func (nu *NullUUID) Scan(val interface{}) error {

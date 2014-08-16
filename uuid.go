@@ -1,5 +1,6 @@
 /*
-Package uuid implements a fast representation of UUIDs (Universally Unique Identifiers) and integrates with JSON and SQL drivers.
+Package uuid implements a fast representation of UUIDs
+(Universally Unique Identifiers) and integrates with JSON and SQL drivers.
 
 This package supports reading of multiple formats of UUIDs, including but not limited to:
 
