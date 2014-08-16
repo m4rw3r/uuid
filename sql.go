@@ -15,7 +15,8 @@ func (e *ErrInvalidType) Error() string {
 	return fmt.Sprintf("uuid Scan(): invalid type '%s', expected string.", e.Type.String())
 }
 
-// Scan scans a uuid from the given interface instance and stores it
+// Scan scans a uuid from the given interface instance and stores it.
+// If scanning fails the state of the UUID is undetermined.
 func (u *UUID) Scan(val interface{}) error {
 	if s, ok := val.(string); ok {
 		err := u.SetString(s)
@@ -27,7 +28,7 @@ func (u *UUID) Scan(val interface{}) error {
 	return &ErrInvalidType{reflect.TypeOf(val)}
 }
 
-// Value gives the database driver representation of the UUID
+// Value gives the database driver representation of the UUID.
 func (u UUID) Value() (driver.Value, error) {
 	return u.String(), nil
 }
