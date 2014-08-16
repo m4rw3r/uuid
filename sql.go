@@ -21,6 +21,9 @@ func (u *UUID) Scan(val interface{}) error {
 	if s, ok := val.(string); ok {
 		return u.SetString(s)
 	}
+	if b, ok := val.([]byte); ok {
+		return u.SetString(string(b))
+	}
 
 	return &ErrInvalidType{reflect.TypeOf(val)}
 }
