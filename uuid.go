@@ -3,17 +3,13 @@ package uuid
 
 import (
 	"crypto/rand"
-	"errors"
 	"fmt"
 )
 
 // UUID represents a Universally-Unique-Identifier
 type UUID [16]byte
 
-var (
-	ErrInvalid = errors.New("invalid UUID")
-	zero       = [16]byte{}
-)
+var zero = [16]byte{}
 
 type scanError struct {
 	scanned int
@@ -31,6 +27,12 @@ type ErrTooLong scanError
 
 func (e *ErrTooLong) Error() string {
 	return fmt.Sprintf("invalid UUID: too many bytes (scanned: %d, length: %d, bytes: %d)", e.scanned, e.length, e.bytes)
+}
+
+type ErrUneven scanError
+
+func (e *ErrUneven) Error() string {
+	return fmt.Sprintf("invalid UUID: uneven hexadecimal bytes (scanned: %d, length: %d, bytes: %d)", e.scanned, e.length, e.bytes)
 }
 
 // hexchar2byte contains the integer byte-value represented by a hexadecimal character,
@@ -96,22 +98,39 @@ func (u *UUID) SetString(str string) error {
 	c := len(str)
 
 	for x < c {
-		if x+1 >= c || i >= 16 {
+		a := hexchar2byte[str[x]]
+		if a == 255 {
+			// Invalid char, skip
+			x++
+
+			continue
+		}
+
+		// We need to perform this check after the attempted hex-read in case
+		// we have trailing "}" characters
+		if i >= 16 {
+			return &ErrTooLong{x, i, c}
+		}
+		if x+1 >= c {
+			// Not enough to scan
 			return &ErrTooShort{x, i, c}
 		}
 
-		if v, ok := hex2byte(str[x:]); ok {
-			u[i] = v
-
-			x += 2
-			i++
-		} else {
-			x++
+		b := hexchar2byte[str[x+1]]
+		if b == 255 {
+			// Uneven hexadecimal byte
+			return &ErrUneven{x, i, c}
 		}
+
+		u[i] = (a << 4) | b
+
+		x += 2
+		i++
 	}
 
 	if i != 16 {
-		return &ErrTooLong{x, i, c}
+		// Can only be too short here
+		return &ErrTooShort{x, i, c}
 	}
 
 	return nil
