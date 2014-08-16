@@ -30,7 +30,7 @@ longer strings like these will parse successfully:
 
 However, the hexadecimal digits MUST come in pairs, and the total number of bytes
 represented by them MUST equal 16, or it will generate a parse error.
-For example, UUIDs like these will not parse:
+For example, invalid UUIDs like these will not parse:
 
 	a0eebc999-c0b-4ef8-bb6d-6bb9bd380a11
 	a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a
@@ -63,7 +63,7 @@ type ScanError struct {
 	// been written to the UUID instance.
 	Written int
 	// Length is the length of the source string.
-	Length  int
+	Length int
 }
 
 // ErrTooShort occurs when the supplied string does not contain enough
