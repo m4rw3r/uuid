@@ -2,7 +2,8 @@
 Package uuid implements a fast representation of UUIDs
 (Universally Unique Identifiers) and integrates with JSON and SQL drivers.
 
-This package supports reading of multiple formats of UUIDs, including but not limited to:
+This package supports reading of multiple formats of UUIDs, including but
+not limited to:
 
 	a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
 	A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11
@@ -29,8 +30,8 @@ longer strings like these will parse successfully:
 	a0eebc99This9cIs0b4eOKf8bb6d6bb9bdLOL380a11
 	a0-ee-bc-99-9c-0b-4e-f8-bb-6d-6b-b9-bd-38-0a-11
 
-However, the hexadecimal digits MUST come in pairs, and the total number of bytes
-represented by them MUST equal 16, or it will generate a parse error.
+However, the hexadecimal digits MUST come in pairs, and the total number of
+bytes represented by them MUST equal 16, or it will generate a parse error.
 For example, invalid UUIDs like these will not parse:
 
 	a0eebc999-c0b-4ef8-bb6d-6bb9bd380a11
@@ -58,7 +59,8 @@ var zero = [16]byte{}
 
 // ScanError contains the scanner-state for when the error occurred.
 type ScanError struct {
-	// Scanned is the number of bytes of the source string which has been considered.
+	// Scanned is the number of bytes of the source string which has been
+	// considered.
 	Scanned int
 	// Written is the number of decoded hexadecimal bytes which has
 	// been written to the UUID instance.
