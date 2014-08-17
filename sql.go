@@ -47,9 +47,12 @@ type NullUUID struct {
 func (nu *NullUUID) Scan(val interface{}) error {
 	if val == nil {
 		nu.UUID, nu.Valid = [16]byte{}, false
+		
+		return nil
 	}
 
 	nu.Valid = true
+
 	return nu.UUID.Scan(val)
 }
 
