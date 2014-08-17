@@ -11,7 +11,7 @@ type ErrInvalidType struct {
 	Type reflect.Type
 }
 
-func (e *ErrInvalidType) Error() string {
+func (e ErrInvalidType) Error() string {
 	return fmt.Sprintf("uuid Scan(): invalid type '%s', expected string.", e.Type.String())
 }
 

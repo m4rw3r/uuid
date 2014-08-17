@@ -71,7 +71,7 @@ type ScanError struct {
 // hexadecimal characters to represent a UUID.
 type ErrTooShort ScanError
 
-func (e *ErrTooShort) Error() string {
+func (e ErrTooShort) Error() string {
 	return fmt.Sprintf("invalid UUID: too few bytes (scanned characters: %d, written bytes: %d, string length: %d)", e.Scanned, e.Written, e.Length)
 }
 
@@ -79,7 +79,7 @@ func (e *ErrTooShort) Error() string {
 // required number of hexadecimal characters to represent a UUID.
 type ErrTooLong ScanError
 
-func (e *ErrTooLong) Error() string {
+func (e ErrTooLong) Error() string {
 	return fmt.Sprintf("invalid UUID: too many bytes (scanned characters: %d, written bytes: %d, string length: %d)", e.Scanned, e.Written, e.Length)
 }
 
@@ -87,7 +87,7 @@ func (e *ErrTooLong) Error() string {
 // impossible to decode it to a byte.
 type ErrUneven ScanError
 
-func (e *ErrUneven) Error() string {
+func (e ErrUneven) Error() string {
 	return fmt.Sprintf("invalid UUID: uneven hexadecimal bytes (scanned characters: %d, written bytes: %d, string length: %d)", e.Scanned, e.Written, e.Length)
 }
 
