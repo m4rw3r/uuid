@@ -189,3 +189,86 @@ func TestNullUUIDValue2(t *testing.T) {
 		t.Error("expected nil, got "+reflect.TypeOf(v).String())
 	}
 }
+
+func BenchmarkUUIDValue(b *testing.B) {
+	u, err := FromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < b.N; i++ {
+		u.Value()
+	}
+}
+
+func BenchmarkUUIDScanString(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		u := UUID{}
+
+		_ = u.Scan("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+	}
+}
+
+func BenchmarkUUIDScanByte(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		u := UUID{}
+
+		_ = u.Scan([]byte("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"))
+	}
+}
+
+func BenchmarkNullUUIDValue(b *testing.B) {
+	u, err := FromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+	if err != nil {
+		panic(err)
+	}
+
+	nu := NullUUID{
+		Valid: true,
+		UUID:  u,
+	}
+
+	for i := 0; i < b.N; i++ {
+		nu.Value()
+	}
+}
+
+func BenchmarkNullUUIDValueNil(b *testing.B) {
+	u, err := FromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+	if err != nil {
+		panic(err)
+	}
+
+	nu := NullUUID{
+		Valid: false,
+		UUID:  u,
+	}
+
+	for i := 0; i < b.N; i++ {
+		nu.Value()
+	}
+}
+
+func BenchmarkNullUUIDScanString(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		nu := NullUUID{}
+
+		_ = nu.Scan("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+	}
+}
+
+func BenchmarkNullUUIDScanByte(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		nu := NullUUID{}
+
+		_ = nu.Scan([]byte("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"))
+	}
+}
+
+func BenchmarkNullUUIDScanNil(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		nu := NullUUID{}
+
+		_ = nu.Scan(nil)
+	}
+}
