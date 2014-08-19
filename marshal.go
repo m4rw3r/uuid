@@ -17,11 +17,11 @@ func (u UUID) MarshalJSON() ([]byte, error) {
 // UnmarshalText reads an UUID from a string into the UUID instance.
 // If this fails the state of the UUID is undetermined.
 func (u *UUID) UnmarshalText(data []byte) error {
-	return u.SetString(string(data))
+	return u.ReadBytes(data)
 }
 
 // UnmarshalJSON reads an UUID from a JSON-string into the UUID instance.
 // If this fails the state of the UUID is undetermined.
 func (u *UUID) UnmarshalJSON(data []byte) error {
-	return u.SetString(string(data[1 : len(data)-1]))
+	return u.ReadBytes(data[1 : len(data)-1])
 }

@@ -22,7 +22,7 @@ func (u *UUID) Scan(val interface{}) error {
 		return u.SetString(s)
 	}
 	if b, ok := val.([]byte); ok {
-		return u.SetString(string(b))
+		return u.ReadBytes(b)
 	}
 
 	return &ErrInvalidType{reflect.TypeOf(val)}

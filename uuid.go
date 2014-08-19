@@ -142,6 +142,58 @@ func FromString(str string) (UUID, error) {
 // On invalid UUID an error is returned and the UUID state will be undetermined.
 // This function will ignore all non-hexadecimal digits.
 func (u *UUID) SetString(str string) error {
+	/* NOTE: Duplicate of SetString, with different method signature, to
+	   prevent unnecessary copying of memory due to string <-> []byte conversion */
+	i := 0
+	x := 0
+	c := len(str)
+
+	for x < c {
+		a := hexchar2byte[str[x]]
+		if a == 255 {
+			// Invalid char, skip
+			x++
+
+			continue
+		}
+
+		// We need to perform this check after the attempted hex-read in case
+		// we have trailing "}" characters
+		if i >= 16 {
+			return &ErrTooLong{x, i, c}
+		}
+		if x+1 >= c {
+			// Not enough to scan
+			return &ErrTooShort{x, i, c}
+		}
+
+		b := hexchar2byte[str[x+1]]
+		if b == 255 {
+			// Uneven hexadecimal byte
+			return &ErrUneven{x, i, c}
+		}
+
+		u[i] = (a << 4) | b
+
+		x += 2
+		i++
+	}
+
+	if i != 16 {
+		// Can only be too short here
+		return &ErrTooShort{x, i, c}
+	}
+
+	return nil
+}
+
+// ReadBytes reads the supplied byte array of hexadecimal characters representing
+// a UUID into the instance.
+// On invalid UUID an error is returned and the UUID state will be undetermined.
+// This function will ignore all non-hexadecimal digits.
+func (u *UUID) ReadBytes(str []byte) error {
+	/* NOTE: Duplicate of SetString, with different method signature, to
+	   prevent unnecessary copying of memory due to string <-> []byte conversion */
 	i := 0
 	x := 0
 	c := len(str)
