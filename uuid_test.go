@@ -4,6 +4,11 @@ import (
 	"testing"
 )
 
+var (
+	testStringUUID = "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+	testByteUUID   = []byte("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+)
+
 func TestZero(t *testing.T) {
 	u := UUID{}
 
@@ -141,7 +146,27 @@ func BenchmarkFromString2(b *testing.B) {
 func BenchmarkSetString(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		u := UUID{}
-		u.SetString("12345678-9abc-deff-edcb-a98765432100")
+
+		u.SetString(testStringUUID)
+	}
+}
+
+func BenchmarkReadBytes(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		u := UUID{}
+
+		u.ReadBytes(testByteUUID)
+	}
+}
+
+func BenchmarkString(b *testing.B) {
+	u, err := FromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < b.N; i++ {
+		u.String()
 	}
 }
 

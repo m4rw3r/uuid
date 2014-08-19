@@ -205,7 +205,7 @@ func BenchmarkUUIDScanString(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		u := UUID{}
 
-		_ = u.Scan("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+		_ = u.Scan(testStringUUID)
 	}
 }
 
@@ -213,7 +213,7 @@ func BenchmarkUUIDScanByte(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		u := UUID{}
 
-		_ = u.Scan([]byte("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"))
+		_ = u.Scan(testByteUUID)
 	}
 }
 
@@ -253,7 +253,7 @@ func BenchmarkNullUUIDScanString(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		nu := NullUUID{}
 
-		_ = nu.Scan("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+		_ = nu.Scan(testStringUUID)
 	}
 }
 
@@ -261,7 +261,7 @@ func BenchmarkNullUUIDScanByte(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		nu := NullUUID{}
 
-		_ = nu.Scan([]byte("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"))
+		_ = nu.Scan(testByteUUID)
 	}
 }
 
