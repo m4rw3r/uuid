@@ -242,9 +242,36 @@ func (u UUID) IsZero() bool {
 	return u == zero
 }
 
+// halfbyte2hexchar contains an array of character values corresponding to
+// hexadecimal values for the position in the array, 0 to 15 (0x0-0xf, half-byte).
+var halfbyte2hexchar = []byte{
+	48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102,
+}
+
 // String returns the string representation of the UUID.
 // This method returns the canonical representation of
 // ``xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx``.
 func (u UUID) String() string {
-	return fmt.Sprintf("%8.x-%4.x-%4.x-%4.x-%12.x", u[0:4], u[4:6], u[6:8], u[8:10], u[10:16])
+	/* It is a lot (~10x) faster to allocate a byte slice of specific size and
+	   then use a lookup table to write the characters to the byte-array and
+	   finally cast to string instead of using fmt.Sprintf() */
+	b := make([]byte, 36)
+
+	for i, n := range []int{
+		0, 2, 4, 6,
+		9, 11,
+		14, 16,
+		19, 21,
+		24, 26, 28, 30, 32, 34,
+	} {
+		b[n] = halfbyte2hexchar[(u[i] >> 4) & 0x0f]
+		b[n+1] = halfbyte2hexchar[u[i] & 0x0f]
+	}
+
+	b[8] = '-'
+	b[13] = '-'
+	b[18] = '-'
+	b[23] = '-'
+
+	return string(b)
 }
