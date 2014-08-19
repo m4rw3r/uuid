@@ -7,6 +7,10 @@ import (
 	"testing"
 )
 
+var (
+	testByteJSONUUID = []byte("\"a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11\"")
+)
+
 func TestUUIDMarshalText(t *testing.T) {
 	u, err := FromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
 	if err != nil {
@@ -100,5 +104,43 @@ func TestUUIDUnmarshalJSON(t *testing.T) {
 		if u.String() != i {
 			t.Error("String representation of UUID '" + i + "' does not match, got '" + u.String() + "'.")
 		}
+	}
+}
+
+func BenchmarkUnmarshalText(b *testing.B) {
+	u := UUID{}
+
+	for i := 0; i < b.N; i++ {
+		_ = u.UnmarshalText(testByteUUID)
+	}
+}
+
+func BenchmarkUnmarshalJSON(b *testing.B) {
+	u := UUID{}
+
+	for i := 0; i < b.N; i++ {
+		_ = u.UnmarshalText(testByteJSONUUID)
+	}
+}
+
+func BenchmarkMarshalText(b *testing.B) {
+	u, err := FromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < b.N; i++ {
+		u.MarshalText()
+	}
+}
+
+func BenchmarkMarshalJSON(b *testing.B) {
+	u, err := FromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < b.N; i++ {
+		u.MarshalJSON()
 	}
 }
