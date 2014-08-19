@@ -1,10 +1,10 @@
 package uuid
 
 import (
-	"fmt"
 	"bytes"
-	"testing"
+	"fmt"
 	"reflect"
+	"testing"
 )
 
 func TestUUIDMarshalText(t *testing.T) {
@@ -16,7 +16,7 @@ func TestUUIDMarshalText(t *testing.T) {
 	a, b := u.MarshalText()
 
 	if b != nil {
-		t.Error("expected UUID.MarshalText() to have err == nil, got '"+reflect.TypeOf(err).String()+"'.")
+		t.Error("expected UUID.MarshalText() to have err == nil, got '" + reflect.TypeOf(err).String() + "'.")
 	}
 
 	if bytes.Compare(a, []byte("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")) != 0 {
@@ -33,7 +33,7 @@ func TestUUIDMarshalJSON(t *testing.T) {
 	a, b := u.MarshalJSON()
 
 	if b != nil {
-		t.Error("expected UUID.MarshalJSON() to have err == nil, got '"+reflect.TypeOf(err).String()+"'.")
+		t.Error("expected UUID.MarshalJSON() to have err == nil, got '" + reflect.TypeOf(err).String() + "'.")
 	}
 
 	if bytes.Compare(a, []byte("\"a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11\"")) != 0 {
@@ -92,7 +92,7 @@ func TestUUIDUnmarshalJSON(t *testing.T) {
 	for _, i := range list {
 		u := UUID{}
 
-		err := u.UnmarshalJSON([]byte("\""+i+"\""))
+		err := u.UnmarshalJSON([]byte("\"" + i + "\""))
 		if err != nil {
 			t.Error(fmt.Sprintf("Failed to read '%s': %s", i, err.Error()))
 		}

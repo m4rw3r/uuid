@@ -8,7 +8,7 @@ import (
 // interface{} cast allocates memory, pre-allocate the benchmark data
 // as that is already being passed as an interface from the SQL-scanner.
 var (
-	testByteInterface = interface{}([]byte("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"))
+	testByteInterface   = interface{}([]byte("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"))
 	testStringInterface = interface{}("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
 )
 
@@ -48,7 +48,7 @@ func TestUUIDScanInt(t *testing.T) {
 	}
 
 	if _, ok := err.(*ErrInvalidType); !ok {
-		t.Error("Expected UUID.Scan to fail with ErrInvalidType, failed with "+reflect.TypeOf(err).String())
+		t.Error("Expected UUID.Scan to fail with ErrInvalidType, failed with " + reflect.TypeOf(err).String())
 		return
 	}
 }
@@ -63,7 +63,7 @@ func TestUUIDScanNil(t *testing.T) {
 	}
 
 	if _, ok := err.(*ErrInvalidType); !ok {
-		t.Error("Expected UUID.Scan to fail with ErrInvalidType, failed with "+reflect.TypeOf(err).String())
+		t.Error("Expected UUID.Scan to fail with ErrInvalidType, failed with " + reflect.TypeOf(err).String())
 		return
 	}
 }
@@ -81,10 +81,10 @@ func TestUUIDValue(t *testing.T) {
 
 	if s, ok := v.(string); ok {
 		if s != "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11" {
-			t.Error("expected 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', got '"+s+"'.")
+			t.Error("expected 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', got '" + s + "'.")
 		}
 	} else {
-		t.Error("expected string, got "+reflect.TypeOf(v).String())
+		t.Error("expected string, got " + reflect.TypeOf(v).String())
 	}
 }
 
@@ -132,7 +132,7 @@ func TestNullUUIDScanInt(t *testing.T) {
 	}
 
 	if _, ok := err.(*ErrInvalidType); !ok {
-		t.Error("Expected NullUUID.Scan to fail with ErrInvalidType, failed with "+reflect.TypeOf(err).String())
+		t.Error("Expected NullUUID.Scan to fail with ErrInvalidType, failed with " + reflect.TypeOf(err).String())
 		return
 	}
 }
@@ -159,7 +159,7 @@ func TestNullUUIDValue(t *testing.T) {
 
 	nu := NullUUID{
 		Valid: true,
-		UUID: u,
+		UUID:  u,
 	}
 
 	v, err := nu.Value()
@@ -169,10 +169,10 @@ func TestNullUUIDValue(t *testing.T) {
 
 	if s, ok := v.(string); ok {
 		if s != "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11" {
-			t.Error("expected 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', got '"+s+"'.")
+			t.Error("expected 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', got '" + s + "'.")
 		}
 	} else {
-		t.Error("expected string, got "+reflect.TypeOf(v).String())
+		t.Error("expected string, got " + reflect.TypeOf(v).String())
 	}
 }
 
@@ -184,7 +184,7 @@ func TestNullUUIDValue2(t *testing.T) {
 
 	nu := NullUUID{
 		Valid: false,
-		UUID: u,
+		UUID:  u,
 	}
 
 	v, err := nu.Value()
@@ -193,7 +193,7 @@ func TestNullUUIDValue2(t *testing.T) {
 	}
 
 	if v != nil {
-		t.Error("expected nil, got "+reflect.TypeOf(v).String())
+		t.Error("expected nil, got " + reflect.TypeOf(v).String())
 	}
 }
 
