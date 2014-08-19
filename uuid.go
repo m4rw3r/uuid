@@ -49,6 +49,8 @@ package uuid
 import (
 	"crypto/rand"
 	"fmt"
+	"reflect"
+	"unsafe"
 )
 
 // UUID represents a Universally-Unique-Identifier.
@@ -61,12 +63,12 @@ var zero = [16]byte{}
 type ScanError struct {
 	// Scanned is the number of bytes of the source string which has been
 	// considered.
-	Scanned int
+	Scanned uintptr
 	// Written is the number of decoded hexadecimal bytes which has
 	// been written to the UUID instance.
 	Written int
 	// Length is the length of the source string.
-	Length int
+	Length uintptr
 }
 
 // ErrTooShort occurs when the supplied string does not contain enough
@@ -148,49 +150,9 @@ func FromString(str string) (UUID, error) {
 // On invalid UUID an error is returned and the UUID state will be undetermined.
 // This function will ignore all non-hexadecimal digits.
 func (u *UUID) SetString(str string) error {
-	/* NOTE: Duplicate of SetString, with different method signature, to
-	   prevent unnecessary copying of memory due to string <-> []byte conversion */
-	i := 0
-	x := 0
-	c := len(str)
+	h := (*reflect.StringHeader)(unsafe.Pointer(&str))
 
-	for x < c {
-		a := hexchar2byte[str[x]]
-		if a == 255 {
-			// Invalid char, skip
-			x++
-
-			continue
-		}
-
-		// We need to perform this check after the attempted hex-read in case
-		// we have trailing "}" characters
-		if i >= 16 {
-			return &ErrTooLong{x, i, c}
-		}
-		if x+1 >= c {
-			// Not enough to scan
-			return &ErrTooShort{x, i, c}
-		}
-
-		b := hexchar2byte[str[x+1]]
-		if b == 255 {
-			// Uneven hexadecimal byte
-			return &ErrUneven{x, i, c}
-		}
-
-		u[i] = (a << 4) | b
-
-		x += 2
-		i++
-	}
-
-	if i != 16 {
-		// Can only be too short here
-		return &ErrTooShort{x, i, c}
-	}
-
-	return nil
+	return u.inner(h.Data, uintptr(h.Len))
 }
 
 // ReadBytes reads the supplied byte array of hexadecimal characters representing
@@ -198,14 +160,17 @@ func (u *UUID) SetString(str string) error {
 // On invalid UUID an error is returned and the UUID state will be undetermined.
 // This function will ignore all non-hexadecimal digits.
 func (u *UUID) ReadBytes(str []byte) error {
-	/* NOTE: Duplicate of SetString, with different method signature, to
-	   prevent unnecessary copying of memory due to string <-> []byte conversion */
+	h := (*reflect.SliceHeader)(unsafe.Pointer(&str))
+
+	return u.inner(h.Data, uintptr(h.Len))
+}
+
+func (u *UUID) inner(str uintptr, c uintptr) error {
 	i := 0
-	x := 0
-	c := len(str)
+	x := uintptr(0)
 
 	for x < c {
-		a := hexchar2byte[str[x]]
+		a := hexchar2byte[*(*uint8)(unsafe.Pointer(str + x))]
 		if a == 255 {
 			// Invalid char, skip
 			x++
@@ -223,7 +188,7 @@ func (u *UUID) ReadBytes(str []byte) error {
 			return &ErrTooShort{x, i, c}
 		}
 
-		b := hexchar2byte[str[x+1]]
+		b := hexchar2byte[*(*uint8)(unsafe.Pointer(str + x + 1))]
 		if b == 255 {
 			// Uneven hexadecimal byte
 			return &ErrUneven{x, i, c}
@@ -241,6 +206,7 @@ func (u *UUID) ReadBytes(str []byte) error {
 	}
 
 	return nil
+
 }
 
 // IsZero returns true if the UUID is zero.
