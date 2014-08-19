@@ -5,6 +5,13 @@ import (
 	"testing"
 )
 
+// interface{} cast allocates memory, pre-allocate the benchmark data
+// as that is already being passed as an interface from the SQL-scanner.
+var (
+	testByteInterface = interface{}([]byte("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"))
+	testStringInterface = interface{}("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+)
+
 func TestUUIDScanString(t *testing.T) {
 	u := UUID{}
 
@@ -202,18 +209,18 @@ func BenchmarkUUIDValue(b *testing.B) {
 }
 
 func BenchmarkUUIDScanString(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		u := UUID{}
+	u := UUID{}
 
-		_ = u.Scan(testStringUUID)
+	for i := 0; i < b.N; i++ {
+		_ = u.Scan(testStringInterface)
 	}
 }
 
 func BenchmarkUUIDScanByte(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		u := UUID{}
+	u := UUID{}
 
-		_ = u.Scan(testByteUUID)
+	for i := 0; i < b.N; i++ {
+		_ = u.Scan(testByteInterface)
 	}
 }
 
@@ -250,25 +257,25 @@ func BenchmarkNullUUIDValueNil(b *testing.B) {
 }
 
 func BenchmarkNullUUIDScanString(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		nu := NullUUID{}
+	nu := NullUUID{}
 
-		_ = nu.Scan(testStringUUID)
+	for i := 0; i < b.N; i++ {
+		_ = nu.Scan(testStringInterface)
 	}
 }
 
 func BenchmarkNullUUIDScanByte(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		nu := NullUUID{}
+	nu := NullUUID{}
 
-		_ = nu.Scan(testByteUUID)
+	for i := 0; i < b.N; i++ {
+		_ = nu.Scan(testByteInterface)
 	}
 }
 
 func BenchmarkNullUUIDScanNil(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		nu := NullUUID{}
+	nu := NullUUID{}
 
+	for i := 0; i < b.N; i++ {
 		_ = nu.Scan(nil)
 	}
 }
