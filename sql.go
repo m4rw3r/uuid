@@ -30,6 +30,7 @@ func (u *UUID) Scan(val interface{}) error {
 
 // Value gives the database driver representation of the UUID.
 func (u UUID) Value() (driver.Value, error) {
+	// The return here causes a second allocation because of the driver.Value interface{} box
 	return u.String(), nil
 }
 
@@ -47,7 +48,7 @@ type NullUUID struct {
 func (nu *NullUUID) Scan(val interface{}) error {
 	if val == nil {
 		nu.UUID, nu.Valid = [16]byte{}, false
-		
+
 		return nil
 	}
 
@@ -62,5 +63,6 @@ func (nu NullUUID) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
+	// The return here causes a second allocation because of the driver.Value interface{} box
 	return nu.UUID.String(), nil
 }
