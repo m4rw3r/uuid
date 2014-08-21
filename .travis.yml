@@ -13,5 +13,5 @@ before_install:
   - go get code.google.com/p/go.tools/cmd/cover
 
 script:
+  - $HOME/gopath/bin/goveralls -repotoken 0xSFQUzYPLhYSnrTQLtdL7sWCWEnt9dG8 || true
   - go test -v -test.bench=".*" -test.benchmem=true .
-  - $HOME/gopath/bin/goveralls -repotoken 0xSFQUzYPLhYSnrTQLtdL7sWCWEnt9dG8
