@@ -71,6 +71,40 @@ func TestFromStringMultiple(t *testing.T) {
 	}
 }
 
+func TestMustFromString(t *testing.T) {
+	correctUUIDFnGenerator := func(str string) func() UUID {
+		return func() UUID {
+			u, _ := FromString(str)
+
+			return u
+		}
+	}
+	zeroUUIDFn := func() UUID {
+		return zero
+	}
+
+	list := map[string]func() UUID{
+		"00000000-0000-0000-0000-00000000000f": correctUUIDFnGenerator("00000000-0000-0000-0000-00000000000f"),
+		"12345678-1234-5678-1234-567812345678": correctUUIDFnGenerator("12345678-1234-5678-1234-567812345678"),
+		"c56a4180-65aa-42ec-a945-5fd21dec0538": correctUUIDFnGenerator("c56a4180-65aa-42ec-a945-5fd21dec0538"),
+		"00000000-0000-0000-0000-00000000000":  zeroUUIDFn,
+		"": zeroUUIDFn,
+		"C56A4180-65AA-42EC-A945-5FD21DEC":     zeroUUIDFn,
+		"x56a4180-h5aa-42ec-a945-5fd21dec0538": zeroUUIDFn,
+		"null": zeroUUIDFn,
+	}
+
+	for given, expectedFn := range list {
+		u := MustFromString(given)
+		e := expectedFn()
+		if e.String() != u.String() {
+			t.Errorf("MustFromString created wrong UUID, got %s, expected %s", u, e)
+		} else {
+			t.Logf("MustFromString returned proper output for given string: %s", given)
+		}
+	}
+}
+
 func TestAlternativeValid(t *testing.T) {
 	uuid := "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
 	list := []string{
