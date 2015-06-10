@@ -34,14 +34,6 @@ func (u UUID) Value() (driver.Value, error) {
 	return u.String(), nil
 }
 
-// NullUUID represents a UUID that may be null.
-// NullUUID implements the Scanner interface so it can be used as a scan destination.
-type NullUUID struct {
-	// Valid is true if UUID is not NULL
-	Valid bool
-	UUID  UUID
-}
-
 // Scan scans a uuid or null from the given value.
 // If the supplied value is nil, Valid will be set to false and the
 // UUID will be zeroed.

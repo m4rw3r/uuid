@@ -1,5 +1,11 @@
 package uuid
 
+import (
+	"bytes"
+)
+
+var nullByteString = []byte("null")
+
 // MarshalText returns the string-representation of the UUID as a byte-array.
 func (u UUID) MarshalText() ([]byte, error) {
 	/* Inlined UUID.String() implementation, cannot reuse the one from
@@ -75,4 +81,66 @@ func (u *UUID) UnmarshalText(data []byte) error {
 // If this fails the state of the UUID is undetermined.
 func (u *UUID) UnmarshalJSON(data []byte) error {
 	return u.ReadBytes(data[1 : len(data)-1])
+}
+
+// MarshalJSON marshals a potentially null UUID into either a string-
+// representation of the UUID or the null-constant depending on the
+// Valid property.
+func (n NullUUID) MarshalJSON() ([]byte, error) {
+	if n.Valid {
+		return n.UUID.MarshalJSON()
+	} else {
+		return nullByteString, nil
+	}
+}
+
+// MarshalText marshals a potentially null UUID into either a string-
+// representation of the UUID or the null-constant depending on the
+// Valid property.
+func (n NullUUID) MarshalText() ([]byte, error) {
+	if n.Valid {
+		return n.UUID.MarshalText()
+	} else {
+		return nullByteString, nil
+	}
+}
+
+// UnmarshalJSON parses a potentially null UUID into a NullUUI instance.
+// If the source is the null-constant ("null"), Valid is set to false,
+// otherwise it will attempt to parse the given string into the UUID property
+// of the NullUUID instance, setting Valid to true if no error is encountered.
+// If an error is encountered, Valid is set to false.
+func (n *NullUUID) UnmarshalJSON(data []byte) error {
+	if bytes.Compare(data, nullByteString) == 0 {
+		n.Valid = false
+
+		return nil
+	}
+
+	err := n.UUID.ReadBytes(data[1 : len(data)-1])
+
+	/* Because we modify in place we set Valid to false in case of an error */
+	n.Valid = err == nil
+
+	return err
+}
+
+// UnmarshalText parses a potentially null UUID into a NullUUI instance.
+// If the source is the null-constant ("null"), Valid is set to false,
+// otherwise it will attempt to parse the given string into the UUID property
+// of the NullUUID instance, setting Valid to true if no error is encountered.
+// If an error is encountered, Valid is set to false.
+func (n *NullUUID) UnmarshalText(data []byte) error {
+	if bytes.Compare(data, nullByteString) == 0 {
+		n.Valid = false
+
+		return nil
+	}
+
+	err := n.UUID.ReadBytes(data)
+
+	/* Because we modify in place we set Valid to false in case of an error */
+	n.Valid = err == nil
+
+	return err
 }

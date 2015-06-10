@@ -54,6 +54,14 @@ import (
 // UUID represents a Universally-Unique-Identifier.
 type UUID [16]byte
 
+// NullUUID represents a UUID that may be null.
+// NullUUID implements the Scanner interface so it can be used as a scan destination.
+type NullUUID struct {
+	// Valid is true if UUID is not NULL
+	Valid bool
+	UUID  UUID
+}
+
 // zero is the zero-UUID, every single byte set to 0.
 var zero = [16]byte{}
 
