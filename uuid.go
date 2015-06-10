@@ -144,6 +144,17 @@ func FromString(str string) (UUID, error) {
 	return u, err
 }
 
+// MustFromString reads a UUID into a new UUID instance,
+// panicing on failure.
+func MustFromString(str string) UUID {
+	u, err := FromString(str)
+	if err != nil {
+		panic(err)
+	}
+
+	return u
+}
+
 // MaybeFromString reads a UUID into a new UUID instance,
 // setting the instance to zero if it fails.
 func MaybeFromString(str string) UUID {

@@ -92,6 +92,45 @@ func TestMaybeFromString(t *testing.T) {
 	}
 }
 
+func TestMustFromString(t *testing.T) {
+	list := map[string]string{
+		"00000000-0000-0000-0000-00000000000f": "00000000-0000-0000-0000-00000000000f",
+		"12345678-1234-5678-1234-567812345678": "12345678-1234-5678-1234-567812345678",
+		"c56a4180-65aa-42ec-a945-5fd21dec0538": "c56a4180-65aa-42ec-a945-5fd21dec0538",
+		"00000000-0000-0000-0000-00000000000":  "", /* Means panic is expected */
+		"":                                     "",
+		"C56A4180-65AA-42EC-A945-5FD21DEC":     "",
+		"x56a4180-h5aa-42ec-a945-5fd21dec0538": "",
+		"null":                                 "",
+		"something invalid here":               "",
+	}
+
+	for input, expected := range list {
+		testMustFromString(t, input, expected)
+	}
+}
+
+func testMustFromString(t *testing.T, input string, expected string) {
+	var u UUID
+
+	defer func() {
+		err := recover()
+
+		if expected == "" && err == nil {
+			t.Errorf("MustFromString(%s) expected panic, got %s", input, u.String())
+		}
+
+		if expected != "" && err != nil {
+			t.Errorf("MustFromString(%s) paniced, expected %s", input, expected)
+		}
+	}()
+
+	u = MustFromString(input)
+	if expected != "" && u.String() != expected {
+		t.Errorf("MustFromString(%s) does not match %s, got %s", input, expected, u.String())
+	}
+}
+
 func TestAlternativeValid(t *testing.T) {
 	uuid := "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
 	list := []string{
