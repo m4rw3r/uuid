@@ -314,6 +314,28 @@ func TestInvalidStringForUUID(t *testing.T) {
 	}
 }
 
+func TestNullUUIDUnmarshalJSON2(t *testing.T) {
+	u, err := FromString("12345678-9abc-deff-edcb-a98765432100")
+	if err != nil {
+		panic(err)
+	}
+
+	n := NullUUID{Valid: true, UUID: u}
+
+	err = n.UnmarshalJSON([]byte("null"))
+	if err != nil {
+		t.Error(fmt.Sprintf("Failed to read 'null': %s", err.Error()))
+	}
+
+	if n.Valid != false {
+		t.Error("Parsing 'null' did not set Valid to false.")
+	}
+
+	if n.UUID.String() != "12345678-9abc-deff-edcb-a98765432100" {
+		t.Error("UUID modified when parsing 'null'")
+	}
+}
+
 func BenchmarkNullUnmarshalText1(b *testing.B) {
 	n := NullUUID{UUID: UUID{}}
 
