@@ -270,6 +270,11 @@ func (u UUID) IsZero() bool {
 	return u == zero
 }
 
+// SetZero sets the UUID to zero.
+func (u *UUID) SetZero() {
+	*u = [16]byte{}
+}
+
 // String returns the string representation of the UUID.
 // This method returns the canonical representation of
 // ``xxxxxxxx-xxxx-Mxxx-Nxxx-xxxxxxxxxxxx``.

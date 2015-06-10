@@ -191,6 +191,23 @@ func TestV4(t *testing.T) {
 	}
 }
 
+func TestSetZero(t *testing.T) {
+	u, err := FromString("12345678-9abc-deff-edcb-a98765432100")
+	if err != nil {
+		panic(err)
+	}
+
+	if u == [16]byte{} {
+		panic("zero UUID returned from FromString")
+	}
+
+	u.SetZero()
+
+	if u != [16]byte{} {
+		t.Errorf("SetZero() did not zero UUID")
+	}
+}
+
 func BenchmarkFromString(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		FromString("12345678-9abc-deff-edcb-a98765432100")
