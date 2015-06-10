@@ -159,7 +159,7 @@ func MaybeFromString(str string) UUID {
 // On invalid UUID an error is returned and the UUID state will be undetermined.
 // This function will ignore all non-hexadecimal digits.
 func (u *UUID) SetString(str string) error {
-	/* NOTE: Duplicate of SetString, with different method signature, to
+	/* NOTE: Duplicate of ReadBytes, with different method signature, to
 	   prevent unnecessary copying of memory due to string <-> []byte conversion */
 	i := 0
 	x := 0
