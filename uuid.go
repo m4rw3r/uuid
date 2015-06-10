@@ -144,8 +144,9 @@ func FromString(str string) (UUID, error) {
 	return u, err
 }
 
-// MustFromString like FromString reads string representation of UUID and create new instance. If input is malformed returns Zero-UUID.
-func MustFromString(str string) UUID {
+// MaybeFromString reads a UUID into a new UUID instance,
+// setting the instance to zero if it fails.
+func MaybeFromString(str string) UUID {
 	u, err := FromString(str)
 	if err != nil {
 		return zero

@@ -71,36 +71,23 @@ func TestFromStringMultiple(t *testing.T) {
 	}
 }
 
-func TestMustFromString(t *testing.T) {
-	correctUUIDFnGenerator := func(str string) func() UUID {
-		return func() UUID {
-			u, _ := FromString(str)
-
-			return u
-		}
-	}
-	zeroUUIDFn := func() UUID {
-		return zero
-	}
-
-	list := map[string]func() UUID{
-		"00000000-0000-0000-0000-00000000000f": correctUUIDFnGenerator("00000000-0000-0000-0000-00000000000f"),
-		"12345678-1234-5678-1234-567812345678": correctUUIDFnGenerator("12345678-1234-5678-1234-567812345678"),
-		"c56a4180-65aa-42ec-a945-5fd21dec0538": correctUUIDFnGenerator("c56a4180-65aa-42ec-a945-5fd21dec0538"),
-		"00000000-0000-0000-0000-00000000000":  zeroUUIDFn,
-		"": zeroUUIDFn,
-		"C56A4180-65AA-42EC-A945-5FD21DEC":     zeroUUIDFn,
-		"x56a4180-h5aa-42ec-a945-5fd21dec0538": zeroUUIDFn,
-		"null": zeroUUIDFn,
+func TestMaybeFromString(t *testing.T) {
+	list := map[string]string{
+		"00000000-0000-0000-0000-00000000000f": "00000000-0000-0000-0000-00000000000f",
+		"12345678-1234-5678-1234-567812345678": "12345678-1234-5678-1234-567812345678",
+		"c56a4180-65aa-42ec-a945-5fd21dec0538": "c56a4180-65aa-42ec-a945-5fd21dec0538",
+		"00000000-0000-0000-0000-00000000000":  "00000000-0000-0000-0000-000000000000",
+		"":                                     "00000000-0000-0000-0000-000000000000",
+		"C56A4180-65AA-42EC-A945-5FD21DEC":     "00000000-0000-0000-0000-000000000000",
+		"x56a4180-h5aa-42ec-a945-5fd21dec0538": "00000000-0000-0000-0000-000000000000",
+		"null":                                 "00000000-0000-0000-0000-000000000000",
+		"something invalid here":               "00000000-0000-0000-0000-000000000000",
 	}
 
-	for given, expectedFn := range list {
-		u := MustFromString(given)
-		e := expectedFn()
-		if e.String() != u.String() {
-			t.Errorf("MustFromString created wrong UUID, got %s, expected %s", u, e)
-		} else {
-			t.Logf("MustFromString returned proper output for given string: %s", given)
+	for input, expected := range list {
+		u := MaybeFromString(input)
+		if u.String() != expected {
+			t.Errorf("MaybeFromString(%s) does not match %s, got %s", input, expected, u.String())
 		}
 	}
 }
