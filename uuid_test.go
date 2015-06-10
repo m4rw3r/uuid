@@ -235,3 +235,15 @@ func BenchmarkV4(b *testing.B) {
 		V4()
 	}
 }
+
+func BenchmarkMaybeFromStringOk(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		MaybeFromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11")
+	}
+}
+
+func BenchmarkMaybeFromStringFail(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		MaybeFromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11abcdef")
+	}
+}
