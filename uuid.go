@@ -144,6 +144,16 @@ func FromString(str string) (UUID, error) {
 	return u, err
 }
 
+// MustFromString like FromString reads string representation of UUID and create new instance. If input is malformed returns Zero-UUID.
+func MustFromString(str string) UUID {
+	u, err := FromString(str)
+	if err != nil {
+		return zero
+	}
+
+	return u
+}
+
 // SetString reads the supplied string-representation of the UUID into the instance.
 // On invalid UUID an error is returned and the UUID state will be undetermined.
 // This function will ignore all non-hexadecimal digits.
