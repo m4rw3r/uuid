@@ -204,11 +204,11 @@ func testMustFromString(t *testing.T, i string, v validator) {
 
 		err, ok := r.(error)
 		if !ok && r != nil {
-			panic(fmt.Sprintf("in test for MustString: got non-error: %+v", r))
+			panic(fmt.Sprintf("in test for MustFromString: got non-error: %+v", r))
 		}
 
 		if e := v.ReadError(err); e != nil {
-			t.Errorf("FromString(%s): %s", i, e.Error())
+			t.Errorf("MustFromString(%s): %s", i, e.Error())
 		}
 	}()
 
@@ -247,6 +247,23 @@ func TestSetZero(t *testing.T) {
 
 	if u != [16]byte{} {
 		t.Errorf("SetZero() did not zero UUID")
+	}
+}
+
+func TestVersion(t *testing.T) {
+	list := map[string]int{
+		"10a7f7c0-1011-11e5-ad77-0002a5d5c51b": 1,
+		"22220da4-d863-3451-98ce-02cc7288bf9a": 3,
+		"ebd435d3-63eb-43c6-8e92-342238da6b58": 4,
+		"92ce3c5b-5c3e-51e5-8490-2a2334346357": 5,
+	}
+
+	for i, v := range list {
+		u := MustFromString(i)
+
+		if u.Version() != v {
+			t.Errorf("Version(%s) returned %d, expected %d", i, u.Version(), v)
+		}
 	}
 }
 

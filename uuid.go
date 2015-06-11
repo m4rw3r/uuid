@@ -315,3 +315,8 @@ func (u UUID) String() string {
 	   to the string-header: */
 	return string(b[:])
 }
+
+// Version returns the UUID version.
+func (u UUID) Version() int {
+	return int(u[6]>>4)
+}
