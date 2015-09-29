@@ -16,7 +16,7 @@ func (e ErrInvalidType) Error() string {
 	if e.Type != nil {
 		t = e.Type.String()
 	}
-	return fmt.Sprintf("uuid Scan(): invalid type '%s', expected string.", t)
+	return fmt.Sprintf("uuid Scan(): invalid type '%s', expected string or []byte.", t)
 }
 
 // Scan scans a uuid from the given interface instance.
