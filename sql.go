@@ -12,7 +12,11 @@ type ErrInvalidType struct {
 }
 
 func (e ErrInvalidType) Error() string {
-	return fmt.Sprintf("uuid Scan(): invalid type '%s', expected string.", e.Type.String())
+	t := "<nil>"
+	if e.Type != nil {
+		t = e.Type.String()
+	}
+	return fmt.Sprintf("uuid Scan(): invalid type '%s', expected string or []byte.", t)
 }
 
 // Scan scans a uuid from the given interface instance.
