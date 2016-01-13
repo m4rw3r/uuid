@@ -304,6 +304,16 @@ func TestNullUUIDUnmarshalJSON1(t *testing.T) {
 	}
 }
 
+func TestInvalidStringForUUID(t *testing.T) {
+	u := NullUUID{}
+	err := u.UnmarshalJSON([]byte("0"))
+	if err == nil {
+		if u.Valid {
+			t.Error("We should have returned an Invalid UUID")
+		}
+	}
+}
+
 func BenchmarkNullUnmarshalText1(b *testing.B) {
 	n := NullUUID{UUID: UUID{}}
 

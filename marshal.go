@@ -113,7 +113,12 @@ func (n NullUUID) MarshalText() ([]byte, error) {
 func (n *NullUUID) UnmarshalJSON(data []byte) error {
 	if bytes.Compare(data, nullByteString) == 0 {
 		n.Valid = false
+		return nil
+	}
 
+	dataLen := len(data)
+	if dataLen < 2 {
+		n.Valid = false
 		return nil
 	}
 
