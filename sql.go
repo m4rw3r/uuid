@@ -33,7 +33,7 @@ func (u *UUID) Scan(val interface{}) error {
 }
 
 // Value gives the database driver representation of the UUID.
-func (u *UUID) Value() (driver.Value, error) {
+func (u UUID) Value() (driver.Value, error) {
 	// The return here causes a second allocation because of the driver.Value interface{} box
 	return u.String(), nil
 }
@@ -54,7 +54,7 @@ func (nu *NullUUID) Scan(val interface{}) error {
 }
 
 // Value gives the database driver representation of the UUID or NULL.
-func (nu *NullUUID) Value() (driver.Value, error) {
+func (nu NullUUID) Value() (driver.Value, error) {
 	if !nu.Valid {
 		return nil, nil
 	}
