@@ -77,6 +77,16 @@ func TestUUIDUnmarshalText(t *testing.T) {
 	}
 }
 
+func TestUnmarshalJSONEmpty(t *testing.T) {
+       u := UUID{}
+       if err := u.UnmarshalJSON([]byte("")); err != nil {
+               t.Errorf("Expected UUID.UnmarshalJSON([]byte(\"\")) to have err == nil, got %v", err)
+       }
+       if !u.IsZero() {
+               t.Error("Expecting zero value")
+       }
+}
+
 func TestUUIDUnmarshalJSON(t *testing.T) {
 	list := []string{
 		"00000000-0000-0000-0000-00000000000f",
