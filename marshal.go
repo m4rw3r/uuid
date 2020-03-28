@@ -4,6 +4,14 @@ import (
 	"bytes"
 )
 
+// ErrNotJSONString occurs when attempting to parse an UUID from a JSON string
+// which is too short or is missing quotes.
+type ErrNotJSONString struct{}
+
+func (e ErrNotJSONString) Error() string {
+	return "invalid UUID: invalid JSON string"
+}
+
 var nullByteString = []byte("null")
 
 // MarshalText returns the string-representation of the UUID as a byte-array.
@@ -80,7 +88,13 @@ func (u *UUID) UnmarshalText(data []byte) error {
 // UnmarshalJSON reads an UUID from a JSON-string into the UUID instance.
 // If this fails the state of the UUID is undetermined.
 func (u *UUID) UnmarshalJSON(data []byte) error {
-	return u.ReadBytes(data[1 : len(data)-1])
+	l := len(data)
+
+	if l < 2 || data[0] != '"' || data[l-1] != '"' {
+		return &ErrNotJSONString{}
+	}
+
+	return u.ReadBytes(data[1 : l-1])
 }
 
 // MarshalJSON marshals a potentially null UUID into either a string-
