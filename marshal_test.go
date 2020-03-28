@@ -108,6 +108,50 @@ func TestUUIDUnmarshalJSON(t *testing.T) {
 	}
 }
 
+func TestUUIDUnmarshalJSONShortError(t *testing.T) {
+	list := [][]byte{
+		[]byte(""),
+		[]byte("\""),
+		[]byte("'"),
+		[]byte("a"),
+		[]byte("\"'"),
+		[]byte("\"a"),
+	}
+
+	for _, i := range list {
+		u := UUID{}
+
+		if err := u.UnmarshalJSON([]byte("")); err != nil {
+			if err.Error() != (&ErrNotJSONString{}).Error() {
+				t.Errorf("Expected ErrNotJSONString, got %s for %s", err.Error(), i)
+			}
+		} else {
+			t.Errorf("%s resulted in successful parse", i)
+		}
+
+		if !u.IsZero() {
+			t.Errorf("Modified UUID with invalid JSON string for %s", i)
+		}
+	}
+}
+
+func TestUUIDUnmarshalJSONShort(t *testing.T) {
+	u := UUID{}
+
+	if err := u.UnmarshalJSON([]byte("\"\"")); err != nil {
+		fmt.Print(err.Error())
+		if err.Error() != (&ErrTooShort{0, 0, 0}).Error() {
+			t.Errorf("Expected ErrNotJSONString, got %s", err.Error())
+		}
+	} else {
+		t.Error("Empty string resulted in successful parse")
+	}
+
+	if !u.IsZero() {
+		t.Error("Modified UUID with invalid JSON string")
+	}
+}
+
 func BenchmarkUnmarshalText(b *testing.B) {
 	u := UUID{}
 
